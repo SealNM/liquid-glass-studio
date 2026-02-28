@@ -1,0 +1,112 @@
+/* ──────────────────────────────────────────────────────────
+   CSS Liquid Glass – pure CSS implementation of the glass
+   effect that works on real HTML elements (no canvas).
+   Uses backdrop-filter, layered gradients, and pseudo-elements.
+   ────────────────────────────────────────────────────────── */
+
+.liquidGlass {
+  position: relative;
+  overflow: hidden;
+
+  /* Core glass material */
+  background: var(--lg-bg, rgba(255, 255, 255, 0.08));
+  backdrop-filter: blur(var(--lg-blur, 24px));
+  -webkit-backdrop-filter: blur(var(--lg-blur, 24px));
+
+  /* Glass edge */
+  border: var(--lg-border, 1px solid rgba(255, 255, 255, 0.18));
+  border-radius: var(--lg-radius, 24px);
+
+  /* Depth shadow */
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+
+  /* Smooth transitions */
+  transition:
+    box-shadow 0.3s ease,
+    transform 0.3s ease,
+    background 0.3s ease;
+
+  /* Content stacking */
+  z-index: 0;
+}
+
+/* ── Top highlight (Fresnel-like reflection) ── */
+.liquidGlass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.06) 30%,
+    transparent 60%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Specular glare spot ── */
+.liquidGlass::after {
+  content: '';
+  position: absolute;
+  top: -40%;
+  left: 10%;
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at 50% 80%,
+    rgba(255, 255, 255, 0.10) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Content must be above pseudo-elements ── */
+.liquidGlassContent {
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Hover lift ── */
+.liquidGlass:hover {
+  box-shadow:
+    0 12px 48px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* ──────── Variant: tinted ──────── */
+.tinted {
+  --lg-bg: rgba(120, 160, 255, 0.12);
+}
+
+/* ──────── Variant: frosted ──────── */
+.frosted {
+  --lg-bg: rgba(255, 255, 255, 0.18);
+  --lg-blur: 40px;
+}
+
+/* ──────── Variant: dark ──────── */
+.dark {
+  --lg-bg: rgba(0, 0, 0, 0.35);
+  --lg-border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ──────── Variant: vibrant ──────── */
+.vibrant {
+  --lg-bg: linear-gradient(
+    135deg,
+    rgba(120, 80, 255, 0.15),
+    rgba(80, 200, 255, 0.12),
+    rgba(255, 120, 200, 0.10)
+  );
+  background: var(--lg-bg);
+  backdrop-filter: blur(var(--lg-blur, 24px)) saturate(1.5);
+  -webkit-backdrop-filter: blur(var(--lg-blur, 24px)) saturate(1.5);
+}
